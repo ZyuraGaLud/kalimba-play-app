@@ -1,0 +1,14 @@
+name: Keep Supabase Awake
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # 5分ごとに実行
+  workflow_dispatch:       # 手動実行も可能
+
+jobs:
+  keep_awake:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Ping to Supabase
+        run: curl -sS -o /dev/null -w "%{http_code}" ${{ secrets.SUPABASE_URL }}/rest/v1/
