@@ -13,18 +13,18 @@ const sounds = {
   C_high: "/sounds/C_high.wav",
 };
 
-const yorokobi = ["E", "E", "F", "G", "G", "F", "E", "D", "C", "C", "D", "E", "E", "D","D"];
+const yorokobi: (keyof typeof sounds)[] = ["E", "E", "F", "G", "G", "F", "E", "D", "C", "C", "D", "E", "E", "D", "D"];
 
 // サウンドをロード
-const playSound = (note: string) => {
+const playSound = (note: keyof typeof sounds) => {
   new Howl({ src: [sounds[note]] }).play();
 };
 
 export default function Kalimba() {
   const keys = Object.keys(sounds);
-  const [recording, setRecording] = useState<{ note: string; time: number }[]>([]);
+  const [recording, setRecording] = useState<{ note: keyof typeof sounds; time: number }[]>([]);
   const [isRecording, setIsRecording] = useState(false);
-  const [savedRecordings, setSavedRecordings] = useState<{ note: string; time: number }[][]>([]);
+  const [savedRecordings, setSavedRecordings] = useState<{ note: keyof typeof sounds; time: number }[][]>([]);
   const [lastInteraction, setLastInteraction] = useState(Date.now());
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function Kalimba() {
   };
 
   // 再生（録音時のタイミングを維持）
-  const playRecording = (recordedNotes: { note: string; time: number }[]) => {
+  const playRecording = (recordedNotes: { note: keyof typeof sounds; time: number }[]) => {
     if (recordedNotes.length === 0) return;
     const startTime = recordedNotes[0].time;
     recordedNotes.forEach(({ note, time }) => {
@@ -72,7 +72,7 @@ export default function Kalimba() {
   };
 
   // 録音中なら記録
-  const handleKeyPress = (note: string) => {
+  const handleKeyPress = (note: keyof typeof sounds) => {
     playSound(note);
     if (isRecording) {
       setRecording((prev) => [...prev, { note, time: Date.now() }]);
@@ -96,7 +96,7 @@ export default function Kalimba() {
         {keys.map((note) => (
           <button
             key={note}
-            onClick={() => handleKeyPress(note)}
+            onClick={() => handleKeyPress(note as keyof typeof sounds)}
             className="relative w-14 sm:w-16 h-40 sm:h-48 bg-gray-800 border-2 border-gray-600 text-gray-200 rounded-xl shadow-[0_0_10px_rgba(0,255,255,0.3)] hover:shadow-[0_0_20px_rgba(0,255,255,0.6)] transition-all transform hover:-translate-y-1 active:scale-95"
           >
             {note.replace("C_high", "C♯")}
